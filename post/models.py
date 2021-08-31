@@ -32,3 +32,6 @@ class Post(models.Model):
         self.modified_date=timezone.now()
         self.slug=self.get_slug()
         return super(Post, self).save(*args,**kwargs)
+
+    def __str__(self):
+        return self.title
