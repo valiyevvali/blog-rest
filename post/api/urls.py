@@ -7,4 +7,5 @@ urlpatterns = [
     path('detail/<slug>', views.PostDetailApiView.as_view(),name='detail'),
     path('delete/<slug>', views.PostDeleteApiView.as_view(),name='delete'),
     path('update/<slug>', views.PostUpdateApiView.as_view(),name='update'),
+    path('create', views.PostCreateApiView.as_view(),name='create'),
 ]

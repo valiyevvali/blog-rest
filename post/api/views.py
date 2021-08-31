@@ -1,9 +1,16 @@
 from django.http import HttpResponse, JsonResponse
-from rest_framework.generics import ListAPIView, RetrieveAPIView,DestroyAPIView,UpdateAPIView
-from post.api.serializers import PostSerializer
+from rest_framework.generics import ( ListAPIView,
+                                      RetrieveAPIView,
+                                      DestroyAPIView,
+                                      UpdateAPIView,
+                                      CreateAPIView,
+                                      RetrieveUpdateAPIView)
+
+from post.api.permisions import IsOwner
+from post.api.serializers import PostSerializer,PostCreateUpdateSerializer
 from post.models import Post
 from django.shortcuts import get_object_or_404
-
+from rest_framework.permissions import (IsAuthenticated,IsAdminUser)
 class PostListApiView(ListAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
@@ -29,7 +36,20 @@ class PostDeleteApiView(DestroyAPIView):
     serializer_class = PostSerializer
     lookup_field = 'slug'
 
-class PostUpdateApiView(UpdateAPIView):
+class PostUpdateApiView(RetrieveUpdateAPIView):
     queryset = Post.objects.all()
-    serializer_class = PostSerializer
+    serializer_class = PostCreateUpdateSerializer
     lookup_field = 'slug'
+    permission_classes = [IsOwner]
+
+    def perform_update(self, serializer):
+        serializer.save(modified_by=self.request.user)
+
+class PostCreateApiView(CreateAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostCreateUpdateSerializer
+    permission_classes = [IsAuthenticated]
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+

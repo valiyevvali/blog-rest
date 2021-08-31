@@ -14,7 +14,8 @@ class Post(models.Model):
     created_date=models.DateTimeField(editable=False)
     modified_date=models.DateTimeField()
     slug=models.SlugField(unique=True,max_length=150,editable=False)
-    image=models.ImageField(upload_to='media/post_images/')
+    image=models.ImageField(upload_to='media/post_images/',null=True,blank=True)
+    modified_by=models.ForeignKey(User,on_delete=models.SET_NULL,null=True,related_name='modified_by')
 
     def get_slug(self):
         slug=slugify(self.title.replace('ı','i'))
