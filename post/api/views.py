@@ -1,4 +1,5 @@
 from django.http import HttpResponse, JsonResponse
+from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import ( ListAPIView,
                                       RetrieveAPIView,
                                       DestroyAPIView,
@@ -6,6 +7,7 @@ from rest_framework.generics import ( ListAPIView,
                                       CreateAPIView,
                                       RetrieveUpdateAPIView)
 
+from post.api.paginations import PostPagination
 from post.api.permisions import IsOwner
 from post.api.serializers import PostSerializer,PostCreateUpdateSerializer
 from post.models import Post
@@ -14,7 +16,12 @@ from rest_framework.permissions import (IsAuthenticated,IsAdminUser)
 class PostListApiView(ListAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-
+    filter_backends = [SearchFilter,OrderingFilter]
+    search_fields=['title','content']
+    pagination_class = PostPagination
+    def get_queryset(self):
+        queryset=Post.objects.filter(draft=False)
+        return queryset
 
 class PostDetailApiView(RetrieveAPIView):
     queryset = Post.objects.all()
@@ -35,6 +42,7 @@ class PostDeleteApiView(DestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     lookup_field = 'slug'
+    permission_classes = [IsOwner]
 
 class PostUpdateApiView(RetrieveUpdateAPIView):
     queryset = Post.objects.all()
