@@ -12,7 +12,6 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = [
             'username',
-            'author',
             'title',
             'content',
             'created_date',

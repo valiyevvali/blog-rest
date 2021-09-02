@@ -7,6 +7,8 @@ from rest_framework.generics import ( ListAPIView,
                                       CreateAPIView,
                                       RetrieveUpdateAPIView)
 
+from rest_framework.mixins import CreateModelMixin,ListModelMixin,DestroyModelMixin
+
 from post.api.paginations import PostPagination
 from post.api.permisions import IsOwner
 from post.api.serializers import PostSerializer,PostCreateUpdateSerializer
@@ -23,6 +25,12 @@ class PostListApiView(ListAPIView):
         queryset=Post.objects.filter(draft=False)
         return queryset
 
+    '''combine create and list using CreateModelMixin'''
+    # def post(self,request,*args,**kwargs):
+    #     return self.create(request,*args,**kwargs)
+    # def perform_create(self, serializer):
+    #     serializer.save(author=self.request.user)
+
 class PostDetailApiView(RetrieveAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
@@ -38,17 +46,20 @@ def post_detail(request, pk):
     serializer = PostSerializer(post)
     return JsonResponse(serializer.data)
 
-class PostDeleteApiView(DestroyAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-    lookup_field = 'slug'
-    permission_classes = [IsOwner]
+# class PostDeleteApiView(DestroyAPIView):
+#     queryset = Post.objects.all()
+#     serializer_class = PostSerializer
+#     lookup_field = 'slug'
+#     permission_classes = [IsOwner]
 
-class PostUpdateApiView(RetrieveUpdateAPIView):
+class PostUpdateApiView(RetrieveUpdateAPIView,DestroyModelMixin):
     queryset = Post.objects.all()
     serializer_class = PostCreateUpdateSerializer
     lookup_field = 'slug'
     permission_classes = [IsOwner]
+    '''combine delete and list using DestroyModelMixin'''
+    def delete(self,request,*args,**kwargs):
+        return self.destroy(request,*args,**kwargs)
 
     def perform_update(self, serializer):
         serializer.save(modified_by=self.request.user)
@@ -59,5 +70,11 @@ class PostCreateApiView(CreateAPIView):
     permission_classes = [IsAuthenticated]
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+    '''combine create and list using ListModelMixin'''
+    # def get(self,request,*args,**kwargs):
+    #     print(args)
+    #     print(kwargs)
+    #     return self.list(self, request, *args, **kwargs)
+
 
 
