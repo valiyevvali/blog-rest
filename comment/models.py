@@ -25,10 +25,11 @@ class Comment(models.Model):
         return super(Comment, self).save(*args,**kwargs)
 
     def __str__(self):
-        return self.post.title + self.author.username
+        return self.post.title +" " + self.author.username + " "+self.text
 
     def children(self):
         return Comment.objects.filter(parent=self)
 
+    @property
     def any_children(self):
         return Comment.objects.filter(parent=self).exists()
