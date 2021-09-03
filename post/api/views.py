@@ -5,7 +5,8 @@ from rest_framework.generics import ( ListAPIView,
                                       DestroyAPIView,
                                       UpdateAPIView,
                                       CreateAPIView,
-                                      RetrieveUpdateAPIView)
+                                      RetrieveUpdateAPIView,
+                                    )
 
 from rest_framework.mixins import CreateModelMixin,ListModelMixin,DestroyModelMixin
 
