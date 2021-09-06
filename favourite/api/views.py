@@ -3,10 +3,12 @@ from .serializers import FavouriteListCreateApiSerializer, FavouriteApiSerialize
 from favourite.models import Favourite
 from .paginations import FavouritePagination
 from .permissions import IsOwner
+from rest_framework.permissions import IsAuthenticated
 class FavouriteListCreateAPIView(ListCreateAPIView):
     queryset = Favourite.objects.all()
     serializer_class = FavouriteListCreateApiSerializer
     pagination_class = FavouritePagination
+    permission_classes = [IsAuthenticated,]
 
     def get_queryset(self):
         return Favourite.objects.filter(user=self.request.user)
