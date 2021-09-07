@@ -11,13 +11,11 @@ class Profile(models.Model):
 
 @receiver(post_save,sender=User)
 def create_user_profile(sender,instance,created,**kwargs):
-    print(sender)
-    print(instance)
-    print(created)
-    print(kwargs)
+    # print(sender)
+    # print(instance)
+    # print(created)
+    # print(kwargs)
     if created:
         Profile.objects.create(user=instance)
-    print(instance.profile)
-    print(instance.username)
     instance.profile.save()
 
