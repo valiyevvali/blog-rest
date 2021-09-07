@@ -10,6 +10,7 @@ from rest_framework.generics import ( ListAPIView,
 
 from rest_framework.mixins import CreateModelMixin,ListModelMixin,DestroyModelMixin
 
+from account.api.throttles import RegisterThrottle
 from post.api.paginations import PostPagination
 from post.api.permisions import IsOwner
 from post.api.serializers import PostSerializer,PostCreateUpdateSerializer
@@ -17,10 +18,13 @@ from post.models import Post
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import (IsAuthenticated,IsAdminUser)
 class PostListApiView(ListAPIView):
+    throttle_scope = 'plist'
+
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     filter_backends = [SearchFilter,OrderingFilter]
     search_fields=['title','content']
+    # throttle_classes = [RegisterThrottle]
     pagination_class = PostPagination
     def get_queryset(self):
         queryset=Post.objects.filter(draft=False)
