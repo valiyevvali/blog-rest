@@ -133,6 +133,82 @@ class UserChangePassword(APITestCase):
         response=self.client.put(self.url,data)
         self.assertEqual(204,response.status_code)
 
+    def test_with_wrong_informations(self):
+        self.test_login_with_token()
+        data = {
+            "old_password": "asdasd",
+            "new_password": "asdasdas123456"
+        }
+        response = self.client.put(self.url, data)
+        self.assertEqual(400, response.status_code)
+
+    def test_with_empty_informations(self):
+        self.test_login_with_token()
+        data = {
+            "old_password": "",
+            "new_password": ""
+        }
+        response = self.client.put(self.url, data)
+        self.assertEqual(400, response.status_code)
+
+
+class UserUpdateProfile(APITestCase):
+    url=reverse("account:me")
+    url_login=reverse("token_obtain_pair")
+
+    def setUp(self):
+        self.username='veli'
+        self.password='veli1234'
+        self.user=User.objects.create_user(username=self.username,password=self.password)
+
+    def test_login_with_token(self):
+        response=self.client.post(self.url_login,{'username':'veli','password':'veli1234'})
+        self.assertEqual(200,response.status_code)
+        token = response.data['access']
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + token)
+
+    def test_is_authenticated_user(self):
+        response=self.client.get(self.url)
+        self.assertEqual(401,response.status_code)
+
+    # valid informations
+    def test_with_valid_informations(self):
+        self.test_login_with_token()
+        data = {
+            "id": 1,
+            "first_name": "Vali2",
+            "last_name": "Valiyev",
+            "profile": {
+                "id": 1,
+                "note": "salam1",
+                "twitter": "dwqdwq"
+            }
+        }
+
+        response = self.client.put(self.url, data, format='json')
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(json.loads(response.content), data)
+
+    def test_with_empty_informations(self):
+        self.test_login_with_token()
+        # note and twitter must be entered
+        data = {
+            "id": 1,
+            "first_name": "",
+            "last_name": "",
+            "profile": {
+                "id": 1,
+                "note": "",
+                "twitter": ""
+            }
+        }
+        response = self.client.put(self.url, data, format='json')
+        self.assertEqual(400, response.status_code)
+
+
+
+
+
 
 
 
