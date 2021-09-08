@@ -24,13 +24,9 @@ class UpdatePasswordView(APIView):
     def get_object(self):
         return self.request.user
 
-    def put(self,*args):
+    def put(self,request,*args,**kwargs):
         self.object=self.get_object()
-        data={
-            'old_password':self.request.data['old_password'],
-            'new_password': self.request.data['new_password'],
-        }
-        serializer=ChangePasswordSerializer(data=data)
+        serializer=ChangePasswordSerializer(data=request.data)
         if serializer.is_valid():
             old_password=serializer.data.get('old_password')
             if not self.object.check_password(old_password):

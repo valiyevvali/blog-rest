@@ -96,8 +96,8 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.ScopedRateThrottle',
     ),
     'DEFAULT_THROTTLE_RATES': {
-        'registerthrottle': '5/hour',
-        'plist':'5/hour'
+        'registerthrottle': '15/hour',
+        # 'plist':'5/hour'
     },
 
 }

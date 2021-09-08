@@ -18,8 +18,7 @@ from post.models import Post
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import (IsAuthenticated,IsAdminUser)
 class PostListApiView(ListAPIView):
-    throttle_scope = 'plist'
-
+    # throttle_scope = 'plist'
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     filter_backends = [SearchFilter,OrderingFilter]
